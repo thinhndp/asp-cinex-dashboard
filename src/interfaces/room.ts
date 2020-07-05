@@ -17,3 +17,10 @@ export interface RoomInput {
   totalRows: number,
   totalSeatsPerRow: number,
 }
+
+export interface RoomValidation {
+	name: string,
+	screenTypes: string,
+	totalRows: string,
+	totalSeatsPerRow: string,
+}

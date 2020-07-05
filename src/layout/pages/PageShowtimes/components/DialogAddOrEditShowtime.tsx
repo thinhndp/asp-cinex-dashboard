@@ -3,9 +3,10 @@ import React, { useState, FunctionComponent, useEffect } from 'react';
 // Misc
 import * as showtimeAPI from '../../../../api/showtimeAPI';
 import moment from 'moment';
+import * as Constants from '../../../../utils/constants';
 
 // Interface
-import { Showtime, ShowtimeInput } from '../../../../interfaces/showtime';
+import { Showtime, ShowtimeInput, ShowtimeValidation } from '../../../../interfaces/showtime';
 import { Movie } from '../../../../interfaces/movie';
 import { Room } from '../../../../interfaces/room';
 import { ScreenType } from '../../../../interfaces/screenType';
@@ -44,6 +45,8 @@ const DialogAddOrEditShowtime: FunctionComponent<IDialogAddOrEditShowtimeProps> 
   const [isLoadingSave, setIsLoadingSave] = useState(false);
   const [selectedCluster, setSelectedCluster] = useState<Cluster | null>(null)
   const [screenTypeAvailableList, setScreenTypeAvailableList] = useState<Array<ScreenType>>([]);
+  const [errors, setErrors] = useState<ShowtimeValidation>({ movieId: '', basePrice: '', roomId: '', screenTypeId: '' });
+  const [requestError, setRequestError] = useState('');
 
   useEffect(() => {
     const newSelectedCluster = props.clusterList.find(cluster => cluster.id === props.selectedClusterId);
@@ -83,40 +86,70 @@ const DialogAddOrEditShowtime: FunctionComponent<IDialogAddOrEditShowtimeProps> 
         screenTypeId: props.showtimeToEdit.screenType.id,
         startAt: props.showtimeToEdit.startAt,
       });
-    }
+	}
+	setErrors({ movieId: '', basePrice: '', roomId: '', screenTypeId: '' });
+	setRequestError('');
   }
 
   const onDialogClose = () => {
     props.onClose();
   }
 
+  const validateInput = () : boolean => {
+	let validationResult: ShowtimeValidation = { movieId: '', basePrice: '', roomId: '', screenTypeId: '' };
+	let isOK = true;
+	if (showtimeInput.movieId.length === 0) {
+		validationResult.movieId = Constants.ERROR_MSG_FIELD_REQUIRED;
+		isOK = false;
+	}
+	if (showtimeInput.roomId.length === 0) {
+		validationResult.roomId = Constants.ERROR_MSG_FIELD_REQUIRED;
+		isOK = false;
+	}
+	if (showtimeInput.screenTypeId.length === 0) {
+		validationResult.screenTypeId = Constants.ERROR_MSG_FIELD_REQUIRED;
+		isOK = false;
+	}
+	if (!(showtimeInput.basePrice > 0)) {
+		validationResult.basePrice = Constants.ERROR_MSG_FIELD_NOT_POSITIVE_NUMBER;
+		isOK = false;
+	}
+	setErrors({ ...validationResult });
+	return isOK;
+}
+
   const onDialogSave = () => {
-    setIsLoadingSave(true);
-    if (!props.showtimeToEdit) {
-      // Add Showtime
-      showtimeAPI.addShowtime(showtimeInput)
-        .then(response => {
-          setIsLoadingSave(false);
-          console.log(response);
-          props.onSave();
-        })
-        .catch(err => {
-          setIsLoadingSave(false);
-          console.log(err);
-        })
-    } else {
-      // Update Showtime
-      showtimeAPI.updateShowtime(props.showtimeToEdit.id, showtimeInput)
-        .then(response => {
-          setIsLoadingSave(false);
-          console.log(response);
-          props.onSave();
-        })
-        .catch(err => {
-          setIsLoadingSave(false);
-          console.log(err);
-        })
-    }
+	const isOK = validateInput();
+	if (isOK) {
+		setIsLoadingSave(true);
+		if (!props.showtimeToEdit) {
+		  // Add Showtime
+		  showtimeAPI.addShowtime(showtimeInput)
+			.then(response => {
+			  setIsLoadingSave(false);
+			  console.log(response);
+			  props.onSave();
+			})
+			.catch(err => {
+			  setIsLoadingSave(false);
+			  setRequestError(err.toString());
+			  console.log(err);
+			})
+		} else {
+		  // Update Showtime
+		  showtimeAPI.updateShowtime(props.showtimeToEdit.id, showtimeInput)
+			.then(response => {
+			  setIsLoadingSave(false);
+			  console.log(response);
+			  props.onSave();
+			})
+			.catch(err => {
+			  setIsLoadingSave(false);
+			  setRequestError(err.toString());
+			  console.log(err);
+			})
+		}
+	}
   }
   
   const intersectScreenTypes = (movieId: string, roomId: string) => {
@@ -137,54 +170,75 @@ const DialogAddOrEditShowtime: FunctionComponent<IDialogAddOrEditShowtimeProps> 
         <div>{!props.showtimeToEdit ? `Add Showtime` : `Edit Showtime: ${moment(props.showtimeToEdit.startAt).format('MMM. D, YYYY [at] h:mm A z')}`}</div>
       </DialogTitle>
       <DialogContent dividers>
-        <DialogContentText>
-          Please fill those fields below to continue.
-        </DialogContentText>
+	  	{
+			requestError.length > 0
+			? (	<DialogContentText style={{ color: "red" }}>
+					{requestError}
+		  		</DialogContentText>)
+			: (	<DialogContentText>
+					Please fill those fields below to continue.
+				</DialogContentText>)
+		}
         <FormControl style={{ marginBottom: 30, }} fullWidth>
-          <FormLabel>Movie:</FormLabel>
-          <Select
-            labelId="movie-select-label"
-            value={showtimeInput.movieId}
-            variant="outlined"
-            style={{ marginTop: 5, }}
-            onChange={(event) => {
-              setShowtimeInput({...showtimeInput, movieId: event.target.value as string});
-            }}
-          >
-            {props.movieList.map(movie => (
-              <MenuItem key={movie.id} value={movie.id}>{movie.title}</MenuItem>
-            ))}
-          </Select>
+			<FormLabel style={{ color: errors.movieId.length > 0 ? "red" : "rgba(0, 0, 0, 0.54)" }}>Movie:</FormLabel>
+			<Select
+				error={errors.movieId.length > 0}
+				labelId="movie-select-label"
+				value={showtimeInput.movieId}
+				variant="outlined"
+				style={{ marginTop: 5, }}
+				onChange={(event) => {
+				setShowtimeInput({...showtimeInput, movieId: event.target.value as string});
+				}}
+			>
+				{props.movieList.map(movie => (
+				<MenuItem key={movie.id} value={movie.id}>{movie.title}</MenuItem>
+				))}
+			</Select>
+		  	{
+				errors.movieId.length > 0 &&
+				<div style={{ color: "red", fontSize: "0.75rem", fontWeight: 400 }}>{errors.movieId}</div>
+			}
         </FormControl>
         <FormControl style={{ marginBottom: 30, paddingRight: 10, width: '50%' }}>
-          <FormLabel>Room:</FormLabel>
-          <Select
-            labelId="room-select-label"
-            value={showtimeInput.roomId}
-            variant="outlined"
-            style={{ marginTop: 5, }}
-            onChange={(event) => {
-              setShowtimeInput({...showtimeInput, roomId: event.target.value as string});
-            }}
-          >
-            {props.roomList.map(room => (
-              <MenuItem key={room.id} value={room.id}>{room.name}</MenuItem>
-            ))}
-          </Select>
+			<FormLabel style={{ color: errors.roomId.length > 0 ? "red" : "rgba(0, 0, 0, 0.54)" }}>Room:</FormLabel>
+			<Select
+				error={errors.roomId.length > 0}
+				labelId="room-select-label"
+				value={showtimeInput.roomId}
+				variant="outlined"
+				style={{ marginTop: 5, }}
+				onChange={(event) => {
+				setShowtimeInput({...showtimeInput, roomId: event.target.value as string});
+				}}
+			>
+				{props.roomList.map(room => (
+				<MenuItem key={room.id} value={room.id}>{room.name}</MenuItem>
+				))}
+			</Select>
+			{
+				errors.roomId.length > 0 &&
+				<div style={{ color: "red", fontSize: "0.75rem", fontWeight: 400 }}>{errors.roomId}</div>
+			}
         </FormControl>
         <FormControl style={{ marginBottom: 30, width: '50%' }}>
-          <FormLabel>Screen type:</FormLabel>
-          <Select
-            labelId="screenType-select-label"
-            value={showtimeInput.screenTypeId}
-            variant="outlined"
-            style={{ marginTop: 5, }}
-            onChange={(event) => {setShowtimeInput({...showtimeInput, screenTypeId: event.target.value as string})}}
-          >
-            {screenTypeAvailableList.map(screenType => (
-              <MenuItem key={screenType.id} value={screenType.id}>{screenType.name}</MenuItem>
-            ))}
-          </Select>
+			<FormLabel style={{ color: errors.screenTypeId.length > 0 ? "red" : "rgba(0, 0, 0, 0.54)" }}>Screen type:</FormLabel>
+			<Select
+				error={errors.screenTypeId.length > 0}
+				labelId="screenType-select-label"
+				value={showtimeInput.screenTypeId}
+				variant="outlined"
+				style={{ marginTop: 5, }}
+				onChange={(event) => {setShowtimeInput({...showtimeInput, screenTypeId: event.target.value as string})}}
+			>
+				{screenTypeAvailableList.map(screenType => (
+				<MenuItem key={screenType.id} value={screenType.id}>{screenType.name}</MenuItem>
+				))}
+			</Select>
+		  	{
+				errors.screenTypeId.length > 0 &&
+				<div style={{ color: "red", fontSize: "0.75rem", fontWeight: 400 }}>{errors.screenTypeId}</div>
+			}
         </FormControl>
         <MuiPickersUtilsProvider utils={MomentUtils}>
           <DateTimePicker
@@ -202,15 +256,17 @@ const DialogAddOrEditShowtime: FunctionComponent<IDialogAddOrEditShowtimeProps> 
           />
         </MuiPickersUtilsProvider>
         <TextField
-          required
-          label="Price ($)"
-          type="number"
-          style={{ marginBottom: 30, width: '50%' }}
-          placeholder="tt7286456"
-          InputLabelProps={{ shrink: true, }}
-          variant="outlined"
-          value={showtimeInput.basePrice}
-          onChange={(event) => {setShowtimeInput({...showtimeInput, basePrice: parseInt(event.target.value) })}}
+			error={errors.basePrice.length > 0}
+			helperText={errors.basePrice}
+			required
+			label="Price ($)"
+			type="number"
+			style={{ marginBottom: 30, width: '50%' }}
+			placeholder="tt7286456"
+			InputLabelProps={{ shrink: true, }}
+			variant="outlined"
+			value={showtimeInput.basePrice}
+			onChange={(event) => {setShowtimeInput({...showtimeInput, basePrice: parseInt(event.target.value) })}}
         />
       </DialogContent>
       <DialogActions>

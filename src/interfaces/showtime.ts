@@ -21,3 +21,10 @@ export interface ShowtimeInput {
   startAt: string,
   status: string,
 }
+
+export interface ShowtimeValidation {
+	movieId: string,
+	basePrice: string,
+	roomId: string,
+	screenTypeId: string,
+}

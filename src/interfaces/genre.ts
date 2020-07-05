@@ -6,3 +6,7 @@ export interface Genre {
 export interface GenreInput {
   name: string,
 }
+
+export interface GenreValidation {
+	name: string,
+}

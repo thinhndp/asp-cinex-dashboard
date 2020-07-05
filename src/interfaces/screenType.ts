@@ -6,3 +6,7 @@ export interface ScreenType {
 export interface ScreenTypeInput {
   name: string,
 }
+
+export interface ScreenTypeValidation {
+	name: string,
+}

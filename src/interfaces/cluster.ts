@@ -10,3 +10,8 @@ export interface ClusterInput {
   name: string,
   address: string,
 }
+
+export interface ClusterValidation {
+	name: string,
+	address: string,
+}
