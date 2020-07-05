@@ -15,7 +15,7 @@ const ROLES = [
   },
   {
     id: "5dc41c396db44b55f81be645",
-    role: "staff",
+    role: "Staff",
     permissionIds: ['showtimes'],
   },
 ]
@@ -61,7 +61,7 @@ const PERMISSIONS = [
 
 const TableRoleInfo: FunctionComponent<ITableRoleInfoProps> = (props) => {
   return (
-    <div style={{ width: 700 }}>
+    <div style={{ width: "100%" }}>
       <div style={{ display: 'flex', width: '100%', }}>
         <div style={{ flex: 1, padding: '3px', borderBottom: '1px solid #ccc', borderRight: '1px solid #ccc' }}></div>
         {

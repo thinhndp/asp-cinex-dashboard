@@ -130,7 +130,7 @@ const DialogAddOrEditRoom: FunctionComponent<IDialogAddOrEditRoomProps> = (props
           required
           label="Room name"
           style={{ margin: 10, marginBottom: 20, }}
-          placeholder="Sci-Fi"
+          placeholder="Room 1"
           fullWidth
           margin="normal"
           InputLabelProps={{ shrink: true, }}

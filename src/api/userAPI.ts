@@ -10,7 +10,7 @@ export const getAllUsers = () => {
 // }
 
 export const updateUser = (id: string, data: UserInput) => {
-  return axios.put(`/users/update/${id}`, data);
+  return axios.put(`/users/UpdateRole`, data);
 }
 
 // export const deleteUser = (id: string) => {

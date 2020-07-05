@@ -7,7 +7,7 @@ export interface Showtime {
   room: Room,
   movie: Movie,
   screenType: ScreenType,
-  price: number,
+  basePrice: number,
   status: string,
   startAt: string,
   endAt: string,
@@ -15,8 +15,9 @@ export interface Showtime {
 
 export interface ShowtimeInput {
   movieId: string,
-  price: number,
+  basePrice: number,
   roomId: string,
   screenTypeId: string,
   startAt: string,
+  status: string,
 }

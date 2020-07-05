@@ -24,14 +24,14 @@ interface IDialogAddOrEditClusterProps {
 }
 
 const DialogAddOrEditCluster: FunctionComponent<IDialogAddOrEditClusterProps> = (props) => {
-  const [clusterInput, setClusterInput] = useState<ClusterInput>({ name: '', manager: 'cinema-Admin', address: '', hotline: '' });
+  const [clusterInput, setClusterInput] = useState<ClusterInput>({ name: '', manager: 'cinema-Admin', address: '' });
   const [isLoadingSave, setIsLoadingSave] = useState(false);
 
   const onDialogEnter = () => {
     if (!props.clusterToEdit) {
-      setClusterInput({ name: '', manager: 'cinema-Admin', address: '', hotline: '' });
+      setClusterInput({ name: '', manager: 'cinema-Admin', address: '' });
     } else {
-      setClusterInput({ name: props.clusterToEdit.name, address: props.clusterToEdit.address, hotline: props.clusterToEdit.hotline, manager: 'cinema-Admin' });
+      setClusterInput({ name: props.clusterToEdit.name, address: props.clusterToEdit.address, manager: 'cinema-Admin' });
     }
   }
 
@@ -100,19 +100,6 @@ const DialogAddOrEditCluster: FunctionComponent<IDialogAddOrEditClusterProps> = 
           variant="outlined"
           value={clusterInput.address}
           onChange={(event) => {setClusterInput({...clusterInput, address: event.target.value })}}
-        />
-        <TextField
-          required
-          id="outlined-full-width"
-          label="Hotline"
-          style={{ margin: 8 }}
-          placeholder="028 7300 9999"
-          fullWidth
-          margin="normal"
-          InputLabelProps={{ shrink: true, }}
-          variant="outlined"
-          value={clusterInput.hotline}
-          onChange={(event) => {setClusterInput({...clusterInput, hotline: event.target.value })}}
         />
       </DialogContent>
       <DialogActions>

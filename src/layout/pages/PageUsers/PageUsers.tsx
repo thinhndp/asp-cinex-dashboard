@@ -47,7 +47,7 @@ const PageUsers: FunctionComponent = () => {
       title: 'Roles',
       field: 'roles',
       render: (rowData) => {
-        const roleStrList = rowData.roles.map(role => role.role).filter(roleStr => roleStr === 'Admin' || roleStr === 'staff');
+        const roleStrList = rowData.roles.map(role => role.role).filter(roleStr => roleStr === 'Admin' || roleStr === 'Staff');
         const roleStrCapitalizedList = roleStrList.map(roleStr => roleStr.charAt(0).toUpperCase() + roleStr.slice(1))
         const roleToDisplay = roleStrCapitalizedList.join(', ');
         return (<span>{roleToDisplay}</span>)
@@ -109,7 +109,7 @@ const PageUsers: FunctionComponent = () => {
   return (
     <div>
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'start', justifyContent: 'center', marginBottom: '12px', color: '#555', fontSize: '16px', }}>
-        <Paper style={{ padding: 20, }}>
+        <Paper style={{ padding: 20, width: "100%" }}>
           <div style={{ fontWeight: 'bold', fontSize: 22, color: '#333', }}>Permissions</div>
           <div style={{ padding: 10, }}>
             <TableRoleInfo />

@@ -27,17 +27,18 @@ interface IDialogAddOrEditUserProps {
 }
 
 const DialogAddOrEditUser: FunctionComponent<IDialogAddOrEditUserProps> = (props) => {
-  const [userInput, setUserInput] = useState<UserInput>({ roleIds: [], cPoint: 0 });
+  const [userInput, setUserInput] = useState<UserInput>({ username: '', roleIds: [], cPoint: 0 });
   const [isLoadingSave, setIsLoadingSave] = useState(false);
 
   const onDialogEnter = () => {
     if (!props.userToEdit) {
-      setUserInput({ roleIds: [], cPoint: 0 });
+      setUserInput({ username: '', roleIds: [], cPoint: 0 });
     } else {
       console.log(props.userToEdit);
       setUserInput({
-        roleIds: props.userToEdit.roles.map(role => role.id),
-        cPoint: props.userToEdit.cPoint
+			username: props.userToEdit.username,
+			roleIds: props.userToEdit.roles.map(role => role.id),
+			cPoint: props.userToEdit.cPoint
       });
     }
   }

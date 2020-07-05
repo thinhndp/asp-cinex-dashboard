@@ -40,7 +40,7 @@ interface IDialogAddOrEditShowtimeProps {
 }
 
 const DialogAddOrEditShowtime: FunctionComponent<IDialogAddOrEditShowtimeProps> = (props) => {
-  const [showtimeInput, setShowtimeInput] = useState<ShowtimeInput>({ movieId: '', price: 10, roomId: '', screenTypeId: '', startAt: moment().add(1, 'hour').startOf('hour').toISOString() });
+  const [showtimeInput, setShowtimeInput] = useState<ShowtimeInput>({ status: 'OPEN', movieId: '', basePrice: 10, roomId: '', screenTypeId: '', startAt: moment().add(1, 'hour').startOf('hour').toISOString() });
   const [isLoadingSave, setIsLoadingSave] = useState(false);
   const [selectedCluster, setSelectedCluster] = useState<Cluster | null>(null)
   const [screenTypeAvailableList, setScreenTypeAvailableList] = useState<Array<ScreenType>>([]);
@@ -69,15 +69,16 @@ const DialogAddOrEditShowtime: FunctionComponent<IDialogAddOrEditShowtimeProps> 
 
   const onDialogEnter = () => {
     if (!props.showtimeToEdit) {
-      setShowtimeInput({ movieId: '', price: 10, roomId: '', screenTypeId: '', startAt: moment().add(1, 'hour').startOf('hour').toISOString() });
+      setShowtimeInput({ status: 'OPEN', movieId: '', basePrice: 10, roomId: '', screenTypeId: '', startAt: moment().add(1, 'hour').startOf('hour').toISOString() });
       // const newScreenTypeAvailableList = intersectScreenTypes2('', '');
       // setScreenTypeAvailableList(newScreenTypeAvailableList);
     } else {
       // const newScreenTypeAvailableList = intersectScreenTypes2(props.showtimeToEdit.movie.id, props.showtimeToEdit.room.id);
       // setScreenTypeAvailableList(newScreenTypeAvailableList);
       setShowtimeInput({
+		status: props.showtimeToEdit.status,
         movieId: props.showtimeToEdit.movie.id,
-        price: props.showtimeToEdit.price,
+        basePrice: props.showtimeToEdit.basePrice,
         roomId: props.showtimeToEdit.room.id,
         screenTypeId: props.showtimeToEdit.screenType.id,
         startAt: props.showtimeToEdit.startAt,
@@ -208,8 +209,8 @@ const DialogAddOrEditShowtime: FunctionComponent<IDialogAddOrEditShowtimeProps> 
           placeholder="tt7286456"
           InputLabelProps={{ shrink: true, }}
           variant="outlined"
-          value={showtimeInput.price}
-          onChange={(event) => {setShowtimeInput({...showtimeInput, price: parseInt(event.target.value) })}}
+          value={showtimeInput.basePrice}
+          onChange={(event) => {setShowtimeInput({...showtimeInput, basePrice: parseInt(event.target.value) })}}
         />
       </DialogContent>
       <DialogActions>

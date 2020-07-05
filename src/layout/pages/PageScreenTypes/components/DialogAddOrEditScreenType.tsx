@@ -80,7 +80,7 @@ const DialogAddOrEditScreenType: FunctionComponent<IDialogAddOrEditScreenTypePro
           id="outlined-full-width"
           label="ScreenType name"
           style={{ margin: 8 }}
-          placeholder="Sci-Fi"
+          placeholder="2D"
           fullWidth
           margin="normal"
           InputLabelProps={{ shrink: true, }}

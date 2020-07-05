@@ -29,7 +29,7 @@ import TextField from '@material-ui/core/TextField';
 
 // Custom Component
 import CheckboxGroup from '../../../../components/CheckboxGroup';
-import MultipleInputActors from './MultipleInputActors';
+// import MultipleInputActors from './MultipleInputActors';
 
 interface IDialogAddMovieProps {
   movieToEdit: Movie | null,
@@ -191,10 +191,10 @@ const DialogAddMovie: FunctionComponent<IDialogAddMovieProps> = (props) => {
               </Select>
             </FormControl>
 
-            <MultipleInputActors
+            {/* <MultipleInputActors
               value={movieInput.actors}
               onChange={(newActors: any) => {setMovieInput({...movieInput, actors: [...newActors]})}}
-            />
+            /> */}
           </Grid>
           <Grid item xs={4} style={{textAlign: 'center'}}>
             <TextField

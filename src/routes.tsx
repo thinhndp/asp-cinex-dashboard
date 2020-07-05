@@ -57,13 +57,13 @@ export const routes = [
   {
     path: '/showtimes',
     component: <PageShowtimes />,
-    requiredRoles: ['Admin', 'staff'],
+    requiredRoles: ['Admin', 'Staff'],
   },
-  {
-    path: '/discounts',
-    component: <PageDiscounts />,
-    requiredRoles: ['Admin'],
-  },
+//   {
+//     path: '/discounts',
+//     component: <PageDiscounts />,
+//     requiredRoles: ['Admin'],
+//   },
   {
     path: '/report',
     component: <PageReport />,

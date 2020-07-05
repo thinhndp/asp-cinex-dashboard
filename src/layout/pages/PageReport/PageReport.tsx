@@ -151,7 +151,8 @@ const PageReport = () => {
     setIsGettingReport(true);
     reportAPI.getReportOfMonth(selectedDate)
     .then((res) => {
-      var reportData = res.data.reports.map((movieReport: any) => ({ 
+		console.log(res);
+      var reportData = res.data.map((movieReport: any) => ({ 
         movie: movieReport.movie,
         Income: movieReport.totalPrice,
         Showtimes: movieReport.showtimes

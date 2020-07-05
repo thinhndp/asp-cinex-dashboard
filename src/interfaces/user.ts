@@ -7,8 +7,9 @@ export interface User {
 }
 
 export interface UserInput {
-  cPoint: number,
-  roleIds: Array<number>,
+	username: string,
+	cPoint: number,
+	roleIds: Array<number>,
 }
 
 export interface Role {

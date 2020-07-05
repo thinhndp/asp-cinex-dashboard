@@ -33,7 +33,6 @@ const PageClusters: FunctionComponent = () => {
     { title: 'Id', field: 'id', editable: 'never', cellStyle: {width: '300px'} },
     { title: 'Name', field: 'name' },
     { title: 'Address', field: 'address' },
-    { title: 'Hotline', field: 'hotline' },
   ]
 
   useEffect(() => {

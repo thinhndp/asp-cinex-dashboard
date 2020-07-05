@@ -1,5 +1,5 @@
 import axios from 'axios';
 
 export const getReportOfMonth = (time: String) => {
-  return axios.post('/reports', { time: time });
+  return axios.post('/Reports', { date: time });
 }

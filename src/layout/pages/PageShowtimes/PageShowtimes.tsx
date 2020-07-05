@@ -90,9 +90,9 @@ const PageShowtimes: FunctionComponent = () => {
     },
     {
       title: 'Price',
-      field: 'price',
+      field: 'basePrice',
       render: (rowData) => {
-        const priceDisplay = '$' + rowData.price.toLocaleString();
+        const priceDisplay = '$' + rowData.basePrice.toLocaleString();
         return (<span>{priceDisplay}</span>)
       }
     },
