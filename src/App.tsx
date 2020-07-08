@@ -47,7 +47,6 @@ const App: React.FC = () => {
 
   const checkTokenLoggedIn = () => {
     const tokenStr = localStorage.getItem('token');
-    console.log(tokenStr);
     if (tokenStr) {
       authAPI.checkToken(tokenStr)
         .then(response => {

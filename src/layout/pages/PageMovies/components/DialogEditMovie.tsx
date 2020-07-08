@@ -42,9 +42,9 @@ interface IDialogAddMovieProps {
 }
 
 const DialogAddMovie: FunctionComponent<IDialogAddMovieProps> = (props) => {
-  const [movieInput, setMovieInput] = useState<MovieUpdateInput>({ title: '', storyline: '', actors: [], releasedAt: '', endAt: moment().add(1, 'hour').startOf('hour').toISOString(), poster: '', trailer: '', wallpapers: [''], rateId: '', screenTypeIds: [], });
+  const [movieInput, setMovieInput] = useState<MovieUpdateInput>({ title: '', storyline: '', actors: [], releasedAt: '', endAt: moment().add(1, 'hour').startOf('hour').toISOString(), poster: '', trailer: '', wallpapers: [''], rateId: -1, screenTypeIds: [], });
   const [isLoadingSave, setIsLoadingSave] = useState(false);
-  const [errors, setErrors] = useState<MovieUpdateValidation>({ title: '', screenTypes: '' });
+  const [errors, setErrors] = useState<MovieUpdateValidation>({ title: '', screenTypes: '', rate: '' });
   const [requestError, setRequestError] = useState('');
 
   const onDialogEnter = () => {
@@ -58,11 +58,11 @@ const DialogAddMovie: FunctionComponent<IDialogAddMovieProps> = (props) => {
         poster: props.movieToEdit.poster,
         trailer: props.movieToEdit.trailer ? props.movieToEdit.trailer : '',
         wallpapers: props.movieToEdit.wallpapers ? props.movieToEdit.wallpapers : [''],
-        rateId: props.movieToEdit.rate ? props.movieToEdit.rate.id : '',
+        rateId: props.movieToEdit.rate ? parseInt(props.movieToEdit.rate.id) : -1,
         screenTypeIds: props.movieToEdit.screenTypes.map(screenType => screenType.id),
       });
 	}
-	setErrors({ title: '', screenTypes: '' });
+	setErrors({ title: '', screenTypes: '', rate: '' });
 	setRequestError('');
   }
 
@@ -71,7 +71,7 @@ const DialogAddMovie: FunctionComponent<IDialogAddMovieProps> = (props) => {
   }
 
   const validateInput = () : boolean => {
-	let validationResult: MovieUpdateValidation = { title: '', screenTypes: '' };
+	let validationResult: MovieUpdateValidation = { title: '', screenTypes: '', rate: '' };
 	let isOK = true;
 	if (movieInput.title.length === 0) {
 		validationResult.title = Constants.ERROR_MSG_FIELD_REQUIRED;
@@ -80,7 +80,11 @@ const DialogAddMovie: FunctionComponent<IDialogAddMovieProps> = (props) => {
 	if (!(movieInput.screenTypeIds.length > 0)) {
 		validationResult.screenTypes = Constants.ERROR_MSG_FIELD_REQUIRED;
 		isOK = false;
-	}
+  }
+  if (movieInput.rateId === -1) {
+    validationResult.rate = Constants.ERROR_MSG_FIELD_REQUIRED;
+    isOK = false;
+  }
 	setErrors({ ...validationResult });
 	return isOK;
 }
@@ -212,18 +216,22 @@ const DialogAddMovie: FunctionComponent<IDialogAddMovieProps> = (props) => {
             />
             <FormControl style={{ margin: 10, marginBottom: 20, }} fullWidth>
               {/* <InputLabel id="rate-select-label">Rate</InputLabel> */}
-              <FormLabel>Rate:</FormLabel>
+              <FormLabel style={{ color: errors.rate.length > 0 ? "red" : "rgba(0, 0, 0, 0.54)" }}>Rate:</FormLabel>
               <Select
                 labelId="rate-select-label"
                 value={movieInput.rateId}
                 variant="outlined"
                 style={{ marginTop: 5, }}
-                onChange={(event) => {setMovieInput({...movieInput, rateId: event.target.value as string})}}
+                onChange={(event) => {setMovieInput({...movieInput, rateId: event.target.value as number})}}
               >
                 {props.rateList.map(rate => (
                   <MenuItem key={rate.id} value={rate.id}>{rate.name}</MenuItem>
                 ))}
               </Select>
+              {
+                errors.rate.length > 0 &&
+                <div style={{ color: "red", fontSize: "0.75rem", fontWeight: 400 }}>{errors.rate}</div>
+              }
             </FormControl>
 
             {/* <MultipleInputActors

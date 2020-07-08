@@ -12,6 +12,7 @@ import PageShowtimes from './layout/pages/PageShowtimes/PageShowtimes';
 import PageDiscounts from './layout/pages/PageDiscounts/PageDiscounts';
 import PageReport from './layout/pages/PageReport/PageReport';
 import PageUsers from './layout/pages/PageUsers/PageUsers'
+import PageActors from './layout/pages/PageActors/PageActors';
 
 export const routes = [
   {
@@ -37,6 +38,11 @@ export const routes = [
   {
     path: '/movies',
     component: <PageMovies />,
+    requiredRoles: ['Admin'],
+  },
+  {
+    path: '/actors',
+    component: <PageActors />,
     requiredRoles: ['Admin'],
   },
   {

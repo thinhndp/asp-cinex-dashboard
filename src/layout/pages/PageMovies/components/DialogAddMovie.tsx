@@ -12,7 +12,7 @@ import { ScreenType } from '../../../../interfaces/screenType';
 
 // Component
 import MomentUtils from '@date-io/moment';
-import { DateTimePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
+import { DateTimePicker, MuiPickersUtilsProvider, DatePicker } from '@material-ui/pickers';
 import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Dialog from '@material-ui/core/Dialog';
@@ -26,26 +26,29 @@ import TextField from '@material-ui/core/TextField';
 
 // Custom Component
 import CheckboxGroup from '../../../../components/CheckboxGroup';
+import { FormControl, Select, MenuItem } from '@material-ui/core';
+import { Rate } from '../../../../interfaces/rate';
 
 interface IDialogAddMovieProps {
   isOpen: boolean,
   screenTypeList: ScreenType[],
+  rateList: Rate[],
   onClose: Function, // Call this to close Dialog
   onSave: Function, // Call this to close Dialog & refresh table
 }
 
 const DialogAddMovie: FunctionComponent<IDialogAddMovieProps> = (props) => {
-  const [movieInput, setMovieInput] = useState<MovieInsertInput>({ imdb: '', actors: [], endAt: moment().add(1, 'hour').startOf('hour').toISOString(), screenTypeIds: [] });
+  const [movieInput, setMovieInput] = useState<MovieInsertInput>({ imdb: '', endAt: moment().add(1, 'hour').startOf('hour').toISOString(), screenTypeIds: [], rateId: -1 });
   const [isLoadingSave, setIsLoadingSave] = useState(false);
-  const [errors, setErrors] = useState<MovieInsertValidation>({ imdb: '', screenTypes: '' });
+  const [errors, setErrors] = useState<MovieInsertValidation>({ imdb: '', screenTypes: '', rate: '' });
   const [requestError, setRequestError] = useState('');
 
   console.log((movieInput.endAt).slice(0, -5));
   console.log(moment().add(1, 'hour').startOf('hour'));
 
   const onDialogEnter = () => {
-	setMovieInput({ imdb: '', actors: [], endAt: moment().add(1, 'hour').startOf('hour').toISOString(), screenTypeIds: [] });
-	setErrors({ imdb: '', screenTypes: '' });
+	setMovieInput({ imdb: '', endAt: moment().add(1, 'hour').startOf('hour').toISOString(), screenTypeIds: [], rateId: -1 });
+	setErrors({ imdb: '', screenTypes: '', rate: '' });
 	setRequestError('');
   }
 
@@ -54,7 +57,7 @@ const DialogAddMovie: FunctionComponent<IDialogAddMovieProps> = (props) => {
   }
 
 const validateInput = () : boolean => {
-	let validationResult: MovieInsertValidation = { imdb: '', screenTypes: '' };
+	let validationResult: MovieInsertValidation = { imdb: '', screenTypes: '', rate: '' };
 	let isOK = true;
 	if (movieInput.imdb.length === 0) {
 		validationResult.imdb = Constants.ERROR_MSG_FIELD_REQUIRED;
@@ -63,7 +66,11 @@ const validateInput = () : boolean => {
 	if (!(movieInput.screenTypeIds.length > 0)) {
 		validationResult.screenTypes = Constants.ERROR_MSG_FIELD_REQUIRED;
 		isOK = false;
-	}
+  }
+  if (movieInput.rateId === -1) {
+    validationResult.rate = Constants.ERROR_MSG_FIELD_REQUIRED;
+    isOK = false;
+  }
 	setErrors({ ...validationResult });
 	return isOK;
 }
@@ -135,34 +142,40 @@ const validateInput = () : boolean => {
 			onChange={(event) => {setMovieInput({...movieInput, imdb: event.target.value })}}
         />
         {renderScreenTypeCheckboxes()}
-        {/* <TextField
-          required
-          label="End at"
-          type="date"
-          style={{ margin: 10, marginBottom: 20, }}
-          placeholder="2020-01-20"
-          fullWidth
-          margin="normal"
-          InputLabelProps={{ shrink: true, }}
-          variant="outlined"
-          value={movieInput.endAt}
-          onChange={(event) => {setMovieInput({...movieInput, endAt: event.target.value })}}
-        /> */}
+        <FormControl style={{ margin: 10, marginBottom: 20, }} fullWidth>
+          {/* <InputLabel id="rate-select-label">Rate</InputLabel> */}
+          <FormLabel style={{ color: errors.rate.length > 0 ? "red" : "rgba(0, 0, 0, 0.54)" }}>Rate:</FormLabel>
+          <Select
+            labelId="rate-select-label"
+            value={movieInput.rateId}
+            variant="outlined"
+            style={{ marginTop: 5, }}
+            onChange={(event) => {setMovieInput({...movieInput, rateId: event.target.value as number})}}
+          >
+            {props.rateList.map(rate => (
+              <MenuItem key={rate.id} value={rate.id}>{rate.name}</MenuItem>
+            ))}
+          </Select>
+          {
+            errors.rate.length > 0 &&
+            <div style={{ color: "red", fontSize: "0.75rem", fontWeight: 400 }}>{errors.rate}</div>
+          }
+        </FormControl>
         <MuiPickersUtilsProvider utils={MomentUtils}>
-          <DateTimePicker
+          <DatePicker
             required
             label="End at"
             inputVariant="outlined"
             style={{ margin: 10, marginBottom: 20 }}
             fullWidth
             minDate={moment()}
-            minutesStep={5}
             value={movieInput.endAt}
             onChange={(date) => {
               if (date) {
                 setMovieInput({...movieInput, endAt: date.toISOString()});
               }
             }}
+
           />
         </MuiPickersUtilsProvider>
       </DialogContent>

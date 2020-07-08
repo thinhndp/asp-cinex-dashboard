@@ -19,6 +19,7 @@ import MaterialTable, { Column, MTableAction } from 'material-table';
 import DialogAddMovie from './components/DialogAddMovie';
 import DialogEditMovie from './components/DialogEditMovie';
 import DialogYesNo from '../../../components/DialogYesNo';
+import moment from 'moment';
 
 // Class
 // import classes from './PageMovies.module.scss';
@@ -74,9 +75,24 @@ const PageMovies: FunctionComponent = () => {
       }
     },
     { title: 'Country', field: 'country', cellStyle: {width: '200px'} },
-    { title: 'Released', field: 'releasedAt', cellStyle: {width: '200px'} },
-    { title: 'End at', field: 'endAt', cellStyle: {width: '200px'} },
-    { title: 'Duration', field: 'runtime', cellStyle: {width: '200px'} },
+    {
+      title: 'Released',
+      field: 'releasedAt',
+      render: (rowData) => {
+        const releasedDisplay = moment(rowData.releasedAt).format('DD/MM/YYYY');
+        return (<span>{releasedDisplay}</span>)
+      },
+    },
+    {
+      title: 'End at',
+      field: 'endAt',
+      render: (rowData) => {
+        const endAtDisplay = moment(rowData.endAt).format('DD/MM/YYYY');
+        return (<span>{endAtDisplay}</span>)
+      },
+    },
+    // { title: 'End at', field: 'endAt', cellStyle: {width: '200px'} },
+    { title: 'Duration (min)', field: 'runtime', cellStyle: {width: '200px'} },
     {
       title: 'Poster',
       field: 'poster',
@@ -200,6 +216,7 @@ const PageMovies: FunctionComponent = () => {
 
       <DialogAddMovie
         isOpen={isDialogAddOpen}
+        rateList={rateList}
         screenTypeList={screenTypeList}
         onClose={() => {
           setIsDialogAddOpen(false);

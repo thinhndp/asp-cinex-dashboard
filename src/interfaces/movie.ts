@@ -27,14 +27,16 @@ export interface Movie {
 
 export interface MovieInsertInput {
   imdb: string,
-  actors: Actor[],
+  // actors: Actor[],
   endAt: string,
   screenTypeIds: string[],
+  rateId: number,
 }
 
 export interface MovieInsertValidation {
 	imdb: string,
-	screenTypes: string,
+  screenTypes: string,
+  rate: string,
 }
 
 export interface MovieUpdateInput {
@@ -46,11 +48,12 @@ export interface MovieUpdateInput {
   poster: string,
   trailer: string, //
   wallpapers: string[], //
-  rateId: string,
+  rateId: number,
   screenTypeIds: string[],
 }
 
 export interface MovieUpdateValidation {
 	title: string,
 	screenTypes: string,
+  rate: string,
 }
