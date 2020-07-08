@@ -2,14 +2,15 @@ import React, { useState, FunctionComponent } from 'react';
 
 // Misc
 import * as discountAPI from '../../../../api/discountAPI';
+import * as Constants from '../../../../utils/constants';
 import moment from 'moment';
 
 // Interface
-import { Discount, DiscountInput } from '../../../../interfaces/discount';
+import { Discount, DiscountInput, DiscountValidation } from '../../../../interfaces/discount';
 
 // Component
 import MomentUtils from '@date-io/moment';
-import { DateTimePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
+import { DateTimePicker, MuiPickersUtilsProvider, DatePicker } from '@material-ui/pickers';
 import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Dialog from '@material-ui/core/Dialog';
@@ -27,17 +28,20 @@ interface IDialogAddOrEditDiscountProps {
 }
 
 const DialogAddOrEditDiscount: FunctionComponent<IDialogAddOrEditDiscountProps> = (props) => {
-  const [discountInput, setDiscountInput] = useState<DiscountInput>({ name: '', discount: 0, expire: moment().add(1, 'hour').startOf('hour').toISOString() });
+  const [discountInput, setDiscountInput] = useState<DiscountInput>({ code: '', discountAmount: 0, expiredDate: moment().add(1, 'hour').startOf('hour').toISOString(), isActive: true });
   const [isLoadingSave, setIsLoadingSave] = useState(false);
+  const [errors, setErrors] = useState<DiscountValidation>({ code: '', discountAmount: '' });
+  const [requestError, setRequestError] = useState('');
 
   const onDialogEnter = () => {
     if (!props.discountToEdit) {
-      setDiscountInput({ name: '', discount: 0, expire: moment().add(1, 'hour').startOf('hour').toISOString() });
+      setDiscountInput({ code: '', discountAmount: 0, expiredDate: moment().add(1, 'hour').startOf('hour').toISOString(), isActive: true });
     } else {
       setDiscountInput({ 
-        name: props.discountToEdit.name,
-        discount: props.discountToEdit.discount,
-        expire: props.discountToEdit.expire,
+        code: props.discountToEdit.code,
+        discountAmount: props.discountToEdit.discountAmount,
+        expiredDate: props.discountToEdit.expiredDate,
+        isActive: props.discountToEdit.isActive,
       });
     }
   }
@@ -45,60 +49,87 @@ const DialogAddOrEditDiscount: FunctionComponent<IDialogAddOrEditDiscountProps> 
   const onDialogClose = () => {
     props.onClose();
   }
+  const validateInput = () : boolean => {
+    let validationResult: DiscountValidation = { code: '', discountAmount: '' };
+    let isOK = true;
+    if (discountInput.code.length === 0) {
+      validationResult.code = Constants.ERROR_MSG_FIELD_REQUIRED;
+      isOK = false;
+    }
+    if (discountInput.discountAmount <= 0) {
+      validationResult.discountAmount = Constants.ERROR_MSG_FIELD_NOT_POSITIVE_NUMBER;
+      isOK = false;
+    }
+    setErrors({ ...validationResult });
+    return isOK;
+  }
 
   const onDialogSave = () => {
-    setIsLoadingSave(true);
-    if (!props.discountToEdit) {
-      // Add
-      discountAPI.addDiscount(discountInput)
-        .then(response => {
-          setIsLoadingSave(false);
-          console.log(response);
-          props.onSave();
-        })
-        .catch(err => {
-          setIsLoadingSave(false);
-          console.log(err);
-        })
-    } else {
-      // Update
-      discountAPI.updateDiscount(props.discountToEdit.id, discountInput)
-        .then(response => {
-          setIsLoadingSave(false);
-          console.log(response);
-          props.onSave();
-        })
-        .catch(err => {
-          setIsLoadingSave(false);
-          console.log(err);
-        })
+    const isOK = validateInput();
+    if (isOK) {
+      setIsLoadingSave(true);
+      if (!props.discountToEdit) {
+        // Add
+        discountAPI.addPromotion(discountInput)
+          .then(response => {
+            setIsLoadingSave(false);
+            console.log(response);
+            props.onSave();
+          })
+          .catch(err => {
+            setIsLoadingSave(false);
+            setRequestError(err.toString());
+          })
+      } else {
+        // Update
+        discountAPI.updatePromotion(props.discountToEdit.id, discountInput)
+          .then(response => {
+            setIsLoadingSave(false);
+            console.log(response);
+            props.onSave();
+          })
+          .catch(err => {
+            setIsLoadingSave(false);
+            setRequestError(err.toString());
+          })
+      }
     }
   }
 
   return (
     <Dialog open={props.isOpen} onEnter={() => onDialogEnter()} onClose={() => onDialogClose()}>
-      <DialogTitle id="form-dialog-title">{!props.discountToEdit ? `Add Discount` : `Edit Discount: ${props.discountToEdit.name}`}</DialogTitle>
+      <DialogTitle id="form-dialog-title">{!props.discountToEdit ? `Add Discount` : `Edit Discount: ${props.discountToEdit.code}`}</DialogTitle>
       <DialogContent dividers>
-        <DialogContentText>
-          Please fill those fields below to continue.
-        </DialogContentText>
+        {
+          requestError.length > 0
+            ? <DialogContentText style={{ color: "red" }}>
+                {requestError}
+              </DialogContentText>
+            : <DialogContentText>
+                Please fill those fields below to continue.
+              </DialogContentText>
+        }
         <TextField
+          error={errors.code.length > 0}
+          helperText={errors.code}
           required
           id="outlined-full-width"
-          label="Discount code (4-6 digits)"
+          label="Discount code"
           style={{ margin: 8 }}
           placeholder="DIS001"
           fullWidth
           margin="normal"
           InputLabelProps={{ shrink: true, }}
           variant="outlined"
-          value={discountInput.name}
-          onChange={(event) => {setDiscountInput({...discountInput, name: event.target.value })}}
+          value={discountInput.code}
+          onChange={(event) => {setDiscountInput({...discountInput, code: event.target.value })}}
         />
         <TextField
+          error={errors.discountAmount.length > 0}
+          helperText={errors.discountAmount}
           required
           id="outlined-full-width"
-          label="Discount Percent (%)"
+          label="Discount Amount ($)"
           style={{ margin: 8 }}
           placeholder="50"
           type='number'
@@ -106,22 +137,21 @@ const DialogAddOrEditDiscount: FunctionComponent<IDialogAddOrEditDiscountProps> 
           margin="normal"
           InputLabelProps={{ shrink: true, }}
           variant="outlined"
-          value={discountInput.discount}
-          onChange={(event) => {setDiscountInput({...discountInput, discount: +event.target.value })}}
+          value={discountInput.discountAmount}
+          onChange={(event) => {setDiscountInput({...discountInput, discountAmount: +event.target.value })}}
         />
         <MuiPickersUtilsProvider utils={MomentUtils}>
-          <DateTimePicker
+          <DatePicker
             label="Expire At"
             inputVariant="outlined"
             style={{ margin: 8 }}
             fullWidth
             minDate={moment()}
             margin="normal"
-            minutesStep={5}
-            value={discountInput.expire}
+            value={discountInput.expiredDate}
             onChange={(date) => {
               if (date) {
-                setDiscountInput({...discountInput, expire: date.toISOString()});
+                setDiscountInput({...discountInput, expiredDate: date.toISOString()});
               }
             }}
           />

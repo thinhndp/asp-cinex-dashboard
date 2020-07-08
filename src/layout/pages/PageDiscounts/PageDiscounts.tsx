@@ -32,28 +32,28 @@ const PageDiscounts: FunctionComponent = () => {
   
   const columns: Array<Column<Discount>> = [
     { title: 'Id', field: 'id', editable: 'never', cellStyle: {width: '300px'} },
-    { title: 'Name', field: 'name' },
+    { title: 'Code', field: 'code' },
     { 
-      title: 'Discount',
-      field: 'discount',
+      title: 'Discount Amount',
+      field: 'discountAmount',
       render: (rowData) => {
-        const discountDisplay = rowData.discount + '%';
+        const discountDisplay = rowData.discountAmount + '$';
         return (<span>{discountDisplay}</span>)
       }
     },
     { 
       title: 'Expire at',
-      field: 'expire',
+      field: 'expiredDate',
       render: (rowData) => {
-        const expireAtDisplay = moment(rowData.expire).format('MMM. D, YYYY [at] h:mm A z');
+        const expireAtDisplay = moment(rowData.expiredDate).format('DD/MM/YYYY');
         return (<span>{expireAtDisplay}</span>)
       }
     },
     { 
       title: 'Status', 
-      field: 'active',
+      field: 'isActive',
       render: (rowData) => {
-        const statusDisplay = rowData.active ? 'ACTIVE' : 'INACTIVE';
+        const statusDisplay = rowData.isActive ? 'ACTIVE' : 'INACTIVE';
         return (<span>{statusDisplay}</span>)
       }
     },
@@ -65,7 +65,7 @@ const PageDiscounts: FunctionComponent = () => {
 
   const getAllDiscounts = () => {
     setIsTableLoading(true);
-    discountAPI.getAllDiscounts()
+    discountAPI.getAllPromotions()
       .then(response => {
         setIsTableLoading(false);
         setDiscounts(response.data);
@@ -92,7 +92,7 @@ const PageDiscounts: FunctionComponent = () => {
 
   const deleteDiscount = (id: string) => {
     setIsLoadingDelete(true);
-    discountAPI.deleteDiscount(id)
+    discountAPI.deletePromotion(id)
       .then((response) => {
         setIsLoadingDelete(false);
         closeDialogDelete();

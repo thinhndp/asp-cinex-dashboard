@@ -44,7 +44,7 @@ const categories = [
       { id: 'Actors', icon: <IconPeople />, path: '/actors', requiredRoles: ['Admin'] },
       { id: 'Rooms', icon: <IconMeetingRoom />, path: '/rooms', requiredRoles: ['Admin'] },
       { id: 'Showtimes', icon: <IconMovie />, path: '/showtimes', requiredRoles: ['Admin', 'Staff'] },
-    //   { id: 'Discounts', icon: <IconDiscount />, path: '/discounts', requiredRoles: ['Admin'] },
+      { id: 'Promotions', icon: <IconDiscount />, path: '/discounts', requiredRoles: ['Admin'] },
       { id: 'Report', icon: <IconReport />, path: '/report', requiredRoles: ['Admin'] },
       { id: 'Users', icon: <IconPeople />, path: '/users', requiredRoles: ['Admin'] },
     ],

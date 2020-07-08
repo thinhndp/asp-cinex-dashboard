@@ -1,13 +1,19 @@
 export interface Discount {
   id: string,
-  name: string,
-  discount: number,
-  expire: string,
-  active: boolean,
+  code: string,
+  discountAmount: number,
+  expiredDate: string,
+  isActive: boolean,
 }
 
 export interface DiscountInput {
-  name: string,
-  discount: number,
-  expire: string,
+  code: string,
+  discountAmount: number,
+  expiredDate: string,
+  isActive: boolean,
+}
+
+export interface DiscountValidation {
+	code: string,
+	discountAmount: string,
 }

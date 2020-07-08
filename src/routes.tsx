@@ -65,11 +65,11 @@ export const routes = [
     component: <PageShowtimes />,
     requiredRoles: ['Admin', 'Staff'],
   },
-//   {
-//     path: '/discounts',
-//     component: <PageDiscounts />,
-//     requiredRoles: ['Admin'],
-//   },
+  {
+    path: '/discounts',
+    component: <PageDiscounts />,
+    requiredRoles: ['Admin'],
+  },
   {
     path: '/report',
     component: <PageReport />,
