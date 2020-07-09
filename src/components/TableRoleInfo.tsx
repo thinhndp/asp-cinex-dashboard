@@ -9,12 +9,12 @@ interface ITableRoleInfoProps {
 
 const ROLES = [
   {
-    id: "5dc41c396db44b55f81be643",
+    id: "1",
     role: "Admin",
     permissionIds: ['clusters', 'genres', 'screenTypes', 'rates', 'movies', 'rooms', 'discounts', 'users', 'showtimes'],
   },
   {
-    id: "5dc41c396db44b55f81be645",
+    id: "2",
     role: "Staff",
     permissionIds: ['showtimes'],
   },

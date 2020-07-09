@@ -21,8 +21,15 @@ const App: React.FC = () => {
     if (tokenStr) {
       const decoded = jwtDecode<any>(tokenStr);
       console.log(decoded);
+      let roles;
+      if (Array.isArray(decoded.roles)) {
+        roles = [...decoded.roles]
+      }
+      else {
+        roles = [decoded.roles];
+      }
       const newAuthContext = {
-        roles: [...decoded.roles] as Array<string>,
+        roles: [...roles] as Array<string>,
         username: decoded.username as string,
         token: tokenStr as string,
       };

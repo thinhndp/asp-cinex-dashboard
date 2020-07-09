@@ -134,32 +134,20 @@ const Header: FunctionComponent<HeaderProps> = (props) => {
               >
                 <Avatar src="http://rentzet.com/homerun/assets/images/no-avatar.png" alt="My Avatar" />
               </IconButton>
-              <StyledMenu
+              {/* <StyledMenu
                 id="customized-menu"
                 anchorEl={anchorEl}
                 keepMounted
                 open={Boolean(anchorEl)}
                 onClose={handleAvatarMenuClose}
               >
-                {/* <StyledMenuItem>
-                  <ListItemIcon>
-                    <SendIcon fontSize="small" />
-                  </ListItemIcon>
-                  <ListItemText primary="Sent mail" />
-                </StyledMenuItem>
-                <StyledMenuItem>
-                  <ListItemIcon>
-                    <InboxIcon fontSize="small" />
-                  </ListItemIcon>
-                  <ListItemText primary="Inbox" />
-                </StyledMenuItem> */}
                 <StyledMenuItem>
                   <ListItemIcon>
                     <ExitToAppIcon fontSize="small" />
                   </ListItemIcon>
                   <ListItemText primary="Log Out" />
                 </StyledMenuItem>
-              </StyledMenu>
+              </StyledMenu> */}
             </Grid>
           </Grid>
         </Toolbar>

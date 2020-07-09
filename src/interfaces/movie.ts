@@ -41,7 +41,7 @@ export interface MovieInsertValidation {
 
 export interface MovieUpdateInput {
   title: string,
-  storyline: string, //
+  story: string, //
   actors: Actor[],
   releasedAt: string, //
   endAt: string,

@@ -42,7 +42,7 @@ interface IDialogAddMovieProps {
 }
 
 const DialogAddMovie: FunctionComponent<IDialogAddMovieProps> = (props) => {
-  const [movieInput, setMovieInput] = useState<MovieUpdateInput>({ title: '', storyline: '', actors: [], releasedAt: '', endAt: moment().add(1, 'hour').startOf('hour').toISOString(), poster: '', trailer: '', wallpapers: [''], rateId: -1, screenTypeIds: [], });
+  const [movieInput, setMovieInput] = useState<MovieUpdateInput>({ title: '', story: '', actors: [], releasedAt: '', endAt: moment().add(1, 'hour').startOf('hour').toISOString(), poster: '', trailer: '', wallpapers: [''], rateId: -1, screenTypeIds: [], });
   const [isLoadingSave, setIsLoadingSave] = useState(false);
   const [errors, setErrors] = useState<MovieUpdateValidation>({ title: '', screenTypes: '', rate: '' });
   const [requestError, setRequestError] = useState('');
@@ -51,7 +51,7 @@ const DialogAddMovie: FunctionComponent<IDialogAddMovieProps> = (props) => {
     if (props.movieToEdit) {
       setMovieInput({
         title: props.movieToEdit.title,
-        storyline: props.movieToEdit.storyline ? props.movieToEdit.storyline : '',
+        story: props.movieToEdit.storyline ? props.movieToEdit.storyline : '',
         actors: [...props.movieToEdit.actors],
         releasedAt: props.movieToEdit.releasedAt,
         endAt: props.movieToEdit.endAt,
@@ -211,8 +211,8 @@ const DialogAddMovie: FunctionComponent<IDialogAddMovieProps> = (props) => {
               margin="normal"
               InputLabelProps={{ shrink: true, }}
               variant="outlined"
-              value={movieInput.storyline}
-              onChange={(event) => {setMovieInput({...movieInput, storyline: event.target.value })}}
+              value={movieInput.story}
+              onChange={(event) => {setMovieInput({...movieInput, story: event.target.value })}}
             />
             <FormControl style={{ margin: 10, marginBottom: 20, }} fullWidth>
               {/* <InputLabel id="rate-select-label">Rate</InputLabel> */}
